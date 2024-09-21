@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Sheet Generator</title>
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.imageUrl && data.pdfUrl) {
+                    document.getElementById('result').innerHTML = `
+                        <img src="${data.imageUrl}" alt="Price Sheet" /><br>
+                        <a href="${data.imageUrl}" download="price-sheet.png">Download PNG</a><br>
+                        <a href="${data.pdfUrl}" download="price-sheet.pdf">Download PDF</a>
+                    `;
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Upload Spreadsheet</h1>
+    <form onsubmit="handleFormSubmit(event)" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".xlsx, .xls, .csv" required>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result"></div>
+</body>
+</html>
+
